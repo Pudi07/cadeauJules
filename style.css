@@ -29,6 +29,10 @@ body {
   overflow-x: hidden;
 }
 
+body.booting {
+  overflow: hidden;
+}
+
 .loading-screen {
   position: fixed;
   inset: 0;
@@ -62,13 +66,22 @@ body {
   border: 1px solid rgba(171, 239, 255, 0.35);
   background: linear-gradient(160deg, rgba(5, 16, 44, 0.9), rgba(4, 8, 27, 0.96));
   box-shadow: 0 0 26px rgba(93, 230, 255, 0.25);
+  animation: loadingCorePulse 1.2s ease-in-out infinite;
 }
 
-.loading-core p {
+.loading-status {
   margin: 0.5rem 0 0.6rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: #e4f8ff;
+  min-height: 1.3em;
+}
+
+.loading-percent {
+  margin: 0.48rem 0 0;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  color: #95e8ff;
 }
 
 .loading-star {
@@ -90,11 +103,22 @@ body {
 
 .loading-bar span {
   display: block;
-  width: 42%;
+  width: 0;
   height: 100%;
+  position: relative;
+  overflow: hidden;
   border-radius: inherit;
   background: linear-gradient(90deg, #60ebff, #64a4ff, #ffd95d);
-  animation: loadingBar 1200ms ease-in-out infinite;
+  transition: width 90ms linear;
+}
+
+.loading-bar span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.58) 45%, transparent 100%);
+  transform: translateX(-130%);
+  animation: loadingShine 700ms linear infinite;
 }
 
 .loading-screen.hide {
@@ -111,6 +135,12 @@ body {
     rgba(77, 227, 255, 0.12) 7deg 14deg
   );
   animation: raysSpin 24s linear infinite;
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+
+body.booting .bg-rays {
+  opacity: 0.25;
 }
 
 .page {
@@ -120,12 +150,28 @@ body {
   gap: 1.1rem;
   justify-items: center;
   padding: clamp(1rem, 3vw, 1.5rem);
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 550ms ease, transform 550ms ease, filter 550ms ease;
+}
+
+body.booting .page {
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.page.ready .hero {
+  animation: entrance 800ms cubic-bezier(0.2, 0.95, 0.2, 1) both;
 }
 
 .hero {
   width: min(94vw, 540px);
   text-align: center;
-  animation: entrance 800ms cubic-bezier(0.2, 0.95, 0.2, 1) both;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
 }
 
 .badge {
@@ -214,6 +260,38 @@ h1 {
   animation: ultimateBlast 560ms cubic-bezier(0.15, 0.95, 0.2, 1), completePulse 1.2s ease-in-out infinite 560ms;
 }
 
+.gift-button.legendary-drop {
+  animation: legendaryDropShake 820ms cubic-bezier(0.12, 0.9, 0.2, 1);
+}
+
+.gift-button.legendary-drop::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 7;
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent 0deg 14deg,
+      rgba(255, 220, 100, 0.8) 14deg 26deg,
+      transparent 26deg 44deg,
+      rgba(110, 234, 255, 0.85) 44deg 52deg,
+      transparent 52deg 74deg
+    );
+  filter: blur(0.6px) drop-shadow(0 0 18px rgba(255, 213, 102, 0.85));
+  animation: rareHaloSpin 900ms linear 1;
+}
+
+.gift-button.legendary-drop .frame-glow {
+  animation: rareGlowBurst 860ms ease-out 1;
+}
+
+.gift-button.legendary-drop .reward-star {
+  animation: rareStarSpin 860ms linear 1;
+}
+
 .frame-glow {
   position: absolute;
   inset: -30%;
@@ -255,6 +333,10 @@ h1 {
 
 .incoming.reveal {
   animation: revealCard 650ms cubic-bezier(0.13, 0.9, 0.2, 1) forwards;
+}
+
+.incoming.legendary-reveal {
+  animation: legendaryReveal 980ms cubic-bezier(0.08, 0.88, 0.18, 1) forwards;
 }
 
 .flash-layer {
@@ -384,6 +466,27 @@ h1 {
   }
   100% {
     transform: translateX(220%);
+  }
+}
+
+@keyframes loadingShine {
+  from {
+    transform: translateX(-130%);
+  }
+  to {
+    transform: translateX(150%);
+  }
+}
+
+@keyframes loadingCorePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 26px rgba(93, 230, 255, 0.25);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow: 0 0 34px rgba(93, 230, 255, 0.42);
   }
 }
 
@@ -519,6 +622,30 @@ h1 {
   }
 }
 
+@keyframes legendaryReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.72) rotate(-24deg);
+    clip-path: circle(0% at 50% 50%);
+    filter: saturate(1.8) brightness(1.45) blur(4px);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.18) rotate(18deg);
+    clip-path: circle(42% at 50% 50%);
+  }
+  55% {
+    transform: scale(1.06) rotate(-10deg);
+    clip-path: circle(88% at 50% 50%);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    clip-path: circle(150% at 50% 50%);
+    filter: saturate(1.05) brightness(1.05) blur(0);
+  }
+}
+
 @keyframes flashIn {
   0% {
     opacity: 0;
@@ -571,6 +698,71 @@ h1 {
   100% {
     opacity: 0;
     transform: scale(1.6) rotate(540deg);
+  }
+}
+
+@keyframes legendaryDropShake {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  15% {
+    transform: scale(1.08) rotate(-5deg);
+  }
+  30% {
+    transform: scale(1.04) rotate(3.8deg);
+  }
+  45% {
+    transform: scale(1.09) rotate(-2.7deg);
+  }
+  60% {
+    transform: scale(1.03) rotate(1.7deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes rareHaloSpin {
+  from {
+    transform: scale(0.55) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.95;
+  }
+  to {
+    transform: scale(1.55) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rareGlowBurst {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  40% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+}
+
+@keyframes rareStarSpin {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 14px rgba(255, 187, 58, 0.85));
+  }
+  50% {
+    transform: scale(1.45) rotate(270deg);
+    filter: drop-shadow(0 0 26px rgba(255, 216, 126, 0.98));
+  }
+  100% {
+    transform: scale(1) rotate(540deg);
+    filter: drop-shadow(0 0 14px rgba(255, 187, 58, 0.85));
   }
 }
 

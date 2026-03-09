@@ -9,12 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="booting">
   <div class="loading-screen" id="loadingScreen" aria-hidden="true">
     <div class="loading-core">
       <div class="loading-star"></div>
-      <p>Chargement du reveal...</p>
-      <div class="loading-bar"><span></span></div>
+      <p class="loading-status" id="loadingStatus">Initialisation de ton anniversaire...</p>
+      <div class="loading-bar"><span id="loadingFill"></span></div>
+      <p class="loading-percent" id="loadingPercent">0%</p>
     </div>
   </div>
 
@@ -22,7 +23,7 @@
 
   <main class="page" aria-live="polite">
     <header class="hero">
-      <h1>Bon Anniversaire</h1>
+      <h1>Bon Anniversaire Jules</h1>
     </header>
 
     <section class="unwrap-zone">

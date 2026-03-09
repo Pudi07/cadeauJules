@@ -13,6 +13,10 @@ const flashLayer = document.getElementById("flashLayer");
 const sparkLayer = document.getElementById("sparkLayer");
 const tapHint = document.getElementById("tapHint");
 const loadingScreen = document.getElementById("loadingScreen");
+const loadingStatus = document.getElementById("loadingStatus");
+const loadingFill = document.getElementById("loadingFill");
+const loadingPercent = document.getElementById("loadingPercent");
+const page = document.querySelector(".page");
 
 const fxCanvas = document.getElementById("fxCanvas");
 const fx = fxCanvas.getContext("2d");
@@ -22,6 +26,14 @@ const state = {
   isAnimating: false,
   isComplete: false,
   stormFrames: 0
+};
+
+const introState = {
+  minDurationMs: 3400,
+  startedAt: 0,
+  clockDone: false,
+  pageLoaded: document.readyState === "complete",
+  finished: false
 };
 
 const particles = [];
@@ -47,12 +59,113 @@ function applyCurrentStep() {
 function updateTapHint() {
   const remaining = steps.length - 1 - state.index;
   if (state.isComplete) {
-    tapHint.textContent = "SURPRISE DEBLOQUEE";
+    tapHint.textContent = "VOICI LE CADEAU LEGENDAIRE QUI T'ATTEND";
   } else if (remaining <= 1) {
     tapHint.textContent = "DERNIER CLIC";
   } else {
     tapHint.textContent = `CLIQUE (${remaining})`;
   }
+}
+
+function updateLoadingUi(progressValue) {
+  const value = Math.max(0, Math.min(100, Math.floor(progressValue)));
+
+  if (loadingFill) {
+    loadingFill.style.width = `${value}%`;
+  }
+
+  if (loadingPercent) {
+    loadingPercent.textContent = `${value}%`;
+  }
+
+  if (!loadingStatus) {
+    return;
+  }
+
+  if (value < 35) {
+    loadingStatus.textContent = "Initialisation de ton anniversaire...";
+  } else if (value < 80) {
+    loadingStatus.textContent = "Chargement des donnees depuis la nouvelle zelande...";
+  } else if (value < 100) {
+    loadingStatus.textContent = "Calibration des confettis...";
+  } else {
+    loadingStatus.textContent = "Prepare-toi !";
+  }
+}
+
+function releaseInterface() {
+  document.body.classList.remove("booting");
+  if (page) {
+    page.classList.add("ready");
+  }
+}
+
+function completeMandatoryIntro() {
+  if (introState.finished) {
+    return;
+  }
+
+  introState.finished = true;
+  updateLoadingUi(100);
+
+  if (!loadingScreen) {
+    releaseInterface();
+    return;
+  }
+
+  loadingScreen.classList.add("hide");
+  window.setTimeout(releaseInterface, 140);
+  window.setTimeout(() => {
+    if (loadingScreen.parentElement) {
+      loadingScreen.remove();
+    }
+  }, 700);
+}
+
+function tryFinishIntro() {
+  if (introState.clockDone && introState.pageLoaded) {
+    completeMandatoryIntro();
+  }
+}
+
+function runMandatoryIntroLoop(timestamp) {
+  if (introState.finished) {
+    return;
+  }
+
+  if (!introState.startedAt) {
+    introState.startedAt = timestamp;
+  }
+
+  const elapsed = timestamp - introState.startedAt;
+  const t = Math.min(1, elapsed / introState.minDurationMs);
+  const eased = 1 - Math.pow(1 - t, 2.5);
+  let progressValue = eased * 100;
+
+  if (t === 1 && !introState.pageLoaded) {
+    progressValue = 99;
+  }
+
+  updateLoadingUi(progressValue);
+  tryFinishIntro();
+
+  if (!introState.finished) {
+    requestAnimationFrame(runMandatoryIntroLoop);
+  }
+}
+
+function startMandatoryIntro() {
+  if (!loadingScreen) {
+    releaseInterface();
+    return;
+  }
+
+  updateLoadingUi(0);
+  requestAnimationFrame(runMandatoryIntroLoop);
+  window.setTimeout(() => {
+    introState.clockDone = true;
+    tryFinishIntro();
+  }, introState.minDurationMs);
 }
 
 function activateFlashEffects(isFinal = false) {
@@ -198,6 +311,28 @@ function launchFinalCelebration() {
   state.stormFrames = 260;
 }
 
+function triggerLegendaryDropStart() {
+  giftButton.classList.remove("legendary-drop");
+  void giftButton.offsetWidth;
+  giftButton.classList.add("legendary-drop");
+
+  activateFlashEffects(true);
+  createGiftCenterBurst(210, 1.25);
+  createSideCannons();
+  createBurst(fxCanvas.width * 0.18, fxCanvas.height * 0.32, 70, 1.25, ["star"]);
+  createBurst(fxCanvas.width * 0.82, fxCanvas.height * 0.32, 70, 1.25, ["star"]);
+  state.stormFrames = Math.max(state.stormFrames, 70);
+
+  window.setTimeout(() => {
+    if (!state.isAnimating || state.isComplete) {
+      return;
+    }
+
+    createGiftCenterBurst(170, 1.2);
+    createBurst(fxCanvas.width * 0.5, fxCanvas.height * 0.16, 55, 1.3, ["star"]);
+  }, 230);
+}
+
 function goToNextStep() {
   if (state.isAnimating) {
     return;
@@ -216,28 +351,34 @@ function goToNextStep() {
   state.isAnimating = true;
   const nextIndex = state.index + 1;
   const nextStep = steps[nextIndex];
+  const isLegendaryTransition = nextIndex === steps.length - 1;
 
   giftButton.classList.remove("opening");
   void giftButton.offsetWidth;
   giftButton.classList.add("opening");
 
-  incomingPhoto.classList.remove("reveal");
+  incomingPhoto.classList.remove("reveal", "legendary-reveal");
   incomingPhoto.src = nextStep.src;
   incomingPhoto.alt = nextStep.alt;
   void incomingPhoto.offsetWidth;
-  incomingPhoto.classList.add("reveal");
+  incomingPhoto.classList.add(isLegendaryTransition ? "legendary-reveal" : "reveal");
 
-  activateFlashEffects(false);
-  createGiftCenterBurst(85, 0.95);
+  if (isLegendaryTransition) {
+    triggerLegendaryDropStart();
+  } else {
+    activateFlashEffects(false);
+    createGiftCenterBurst(85, 0.95);
+  }
 
   incomingPhoto.addEventListener(
     "animationend",
     () => {
       state.index = nextIndex;
       applyCurrentStep();
-      incomingPhoto.classList.remove("reveal");
+      incomingPhoto.classList.remove("reveal", "legendary-reveal");
       incomingPhoto.style.opacity = "0";
       state.isAnimating = false;
+      giftButton.classList.remove("legendary-drop");
       updateTapHint();
 
       if (state.index >= steps.length - 1) {
@@ -250,6 +391,10 @@ function goToNextStep() {
 
 giftButton.addEventListener("click", goToNextStep);
 window.addEventListener("resize", resizeCanvas);
+window.addEventListener("load", () => {
+  introState.pageLoaded = true;
+  tryFinishIntro();
+});
 
 preloadImages();
 resizeCanvas();
@@ -257,13 +402,4 @@ applyCurrentStep();
 updateTapHint();
 createGiftCenterBurst(90, 0.9);
 requestAnimationFrame(animateParticles);
-
-window.addEventListener("load", () => {
-  if (!loadingScreen) {
-    return;
-  }
-
-  window.setTimeout(() => {
-    loadingScreen.classList.add("hide");
-  }, 850);
-});
+startMandatoryIntro();
