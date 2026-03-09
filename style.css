@@ -1,0 +1,482 @@
+:root {
+  --navy-1: #081742;
+  --navy-2: #142f73;
+  --cyan: #4de3ff;
+  --blue: #2a75ff;
+  --gold-1: #ffd95d;
+  --gold-2: #ff9a03;
+  --white: #ffffff;
+  --ink: #081124;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Outfit", "Trebuchet MS", sans-serif;
+  color: var(--white);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(140, 236, 255, 0.35), transparent 35%),
+    radial-gradient(circle at 80% 5%, rgba(90, 130, 255, 0.45), transparent 45%),
+    linear-gradient(165deg, #040b1d, #0a1f54 40%, #122e6c 75%, #101f4f);
+  overflow-x: hidden;
+}
+
+.bg-rays {
+  position: fixed;
+  inset: -30vmax;
+  z-index: -2;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.04) 0deg 7deg,
+    rgba(77, 227, 255, 0.12) 7deg 14deg
+  );
+  animation: raysSpin 24s linear infinite;
+}
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 1.1rem;
+  justify-items: center;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.hero {
+  width: min(94vw, 540px);
+  text-align: center;
+  animation: entrance 800ms cubic-bezier(0.2, 0.95, 0.2, 1) both;
+}
+
+.badge {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #bcf5ff;
+  text-shadow: 0 0 18px rgba(77, 227, 255, 0.65);
+}
+
+h1 {
+  margin: 0.3rem 0 0;
+  font-family: "Bangers", "Impact", sans-serif;
+  font-size: clamp(2.2rem, 9vw, 3.8rem);
+  letter-spacing: 0.05em;
+  line-height: 0.95;
+  color: #ffe080;
+  text-shadow:
+    0 2px 0 #ca6f00,
+    0 0 30px rgba(255, 153, 0, 0.65);
+}
+
+.hero h2 {
+  margin: 0.6rem 0 0;
+  font-size: clamp(1.05rem, 3.8vw, 1.35rem);
+  font-weight: 900;
+  color: #d7f8ff;
+}
+
+.intro-text {
+  margin: 0.55rem auto 0;
+  width: min(92vw, 480px);
+  font-size: clamp(0.95rem, 3.6vw, 1.03rem);
+  line-height: 1.4;
+  color: #d6e8ff;
+}
+
+.unwrap-zone {
+  width: min(94vw, 540px);
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+}
+
+.gift-button {
+  all: unset;
+  width: min(92vw, 420px);
+  aspect-ratio: 9 / 16;
+  position: relative;
+  display: block;
+  border-radius: 26px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 3px rgba(255, 230, 110, 0.4),
+    0 20px 35px rgba(0, 0, 0, 0.5),
+    0 0 32px rgba(62, 166, 255, 0.5);
+  transform-origin: center;
+  animation: idleFloat 2.7s ease-in-out infinite;
+}
+
+.gift-button::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 3px solid transparent;
+  background: linear-gradient(125deg, rgba(255, 220, 108, 0.92), rgba(78, 226, 255, 0.75), rgba(255, 167, 58, 0.92)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderShift 2.6s linear infinite;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.gift-button:focus-visible {
+  outline: 4px solid rgba(255, 250, 202, 0.95);
+  outline-offset: 6px;
+}
+
+.gift-button.opening {
+  animation: openShake 480ms linear;
+}
+
+.gift-button.complete {
+  animation: completePulse 1.3s ease-in-out infinite;
+}
+
+.gift-button.ultimate {
+  animation: ultimateBlast 560ms cubic-bezier(0.15, 0.95, 0.2, 1), completePulse 1.2s ease-in-out infinite 560ms;
+}
+
+.frame-glow {
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(circle, rgba(255, 246, 204, 0.5), transparent 45%);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 1;
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+.reward-star {
+  position: absolute;
+  top: 0.65rem;
+  left: 0.65rem;
+  width: 58px;
+  aspect-ratio: 1 / 1;
+  clip-path: polygon(50% 0%, 62% 34%, 100% 35%, 70% 58%, 82% 100%, 50% 74%, 18% 100%, 30% 58%, 0% 35%, 38% 34%);
+  background: linear-gradient(180deg, #fff4a8, #ffba15);
+  filter: drop-shadow(0 0 14px rgba(255, 187, 58, 0.85));
+  z-index: 5;
+  animation: starSpin 4s linear infinite;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  background: #0d1834;
+}
+
+.incoming {
+  opacity: 0;
+  z-index: 3;
+}
+
+.incoming.reveal {
+  animation: revealCard 650ms cubic-bezier(0.13, 0.9, 0.2, 1) forwards;
+}
+
+.flash-layer {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0 10%, rgba(255, 223, 125, 0.65) 18%, transparent 52%),
+    linear-gradient(130deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0));
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.flash-layer.active {
+  animation: flashIn 480ms ease-out;
+}
+
+.spark-layer {
+  position: absolute;
+  inset: -18%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 4;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 12deg,
+    rgba(255, 220, 100, 0.8) 12deg 18deg,
+    transparent 18deg 30deg,
+    rgba(80, 221, 255, 0.75) 30deg 34deg,
+    transparent 34deg 46deg
+  );
+}
+
+.spark-layer.active {
+  animation: sparkBurst 600ms ease-out;
+}
+
+.flash-layer.final-active {
+  animation: finalFlash 900ms ease-out;
+}
+
+.spark-layer.final-active {
+  animation: finalSpark 1200ms ease-out;
+}
+
+.tap-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 0.95rem;
+  transform: translateX(-50%);
+  z-index: 7;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #05142a;
+  background: linear-gradient(180deg, #fff9d9, #ffd46b);
+  box-shadow: 0 0 18px rgba(255, 219, 121, 0.8);
+  animation: tapPulse 1.25s ease-in-out infinite;
+}
+
+#fxCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 12;
+}
+
+@keyframes entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes raysSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes idleFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.005);
+  }
+}
+
+@keyframes borderShift {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.52;
+  }
+  50% {
+    transform: scale(1.09);
+    opacity: 0.78;
+  }
+}
+
+@keyframes starSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes openShake {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  20% {
+    transform: scale(1.015) rotate(-1.8deg);
+  }
+  40% {
+    transform: scale(1.01) rotate(1.4deg);
+  }
+  60% {
+    transform: scale(1.018) rotate(-0.9deg);
+  }
+  80% {
+    transform: scale(1.01) rotate(0.7deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes completePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 3px rgba(255, 230, 110, 0.6),
+      0 22px 36px rgba(0, 0, 0, 0.52),
+      0 0 35px rgba(255, 194, 66, 0.7);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow:
+      0 0 0 4px rgba(255, 230, 110, 0.75),
+      0 22px 36px rgba(0, 0, 0, 0.52),
+      0 0 45px rgba(255, 198, 73, 0.9);
+  }
+}
+
+@keyframes ultimateBlast {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  20% {
+    transform: scale(1.06) rotate(-3deg);
+    filter: brightness(1.25) saturate(1.25);
+  }
+  40% {
+    transform: scale(1.04) rotate(2.4deg);
+  }
+  60% {
+    transform: scale(1.08) rotate(-1.5deg);
+    filter: brightness(1.35) saturate(1.45);
+  }
+  100% {
+    transform: scale(1.02) rotate(0deg);
+    filter: brightness(1.1) saturate(1.15);
+  }
+}
+
+@keyframes revealCard {
+  0% {
+    opacity: 0;
+    transform: scale(1.24) rotate(-4deg);
+    clip-path: circle(0% at 50% 50%);
+    filter: saturate(1.4) blur(4px) brightness(1.35);
+  }
+  55% {
+    opacity: 1;
+    clip-path: circle(65% at 50% 50%);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    clip-path: circle(150% at 50% 50%);
+    filter: saturate(1) blur(0) brightness(1);
+  }
+}
+
+@keyframes flashIn {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes sparkBurst {
+  0% {
+    opacity: 0;
+    transform: scale(0.25) rotate(0deg);
+  }
+  35% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.22) rotate(180deg);
+  }
+}
+
+@keyframes finalFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  24% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+@keyframes finalSpark {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  22% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6) rotate(540deg);
+  }
+}
+
+@keyframes tapPulse {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.08);
+  }
+}
+
+@media (min-width: 720px) {
+  .page {
+    padding-top: 1.4rem;
+  }
+
+  .hero {
+    width: min(94vw, 660px);
+  }
+
+  .gift-button {
+    width: min(86vw, 430px);
+  }
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ouverture Cadeau Anniversaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-rays" aria-hidden="true"></div>
+
+  <main class="page" aria-live="polite">
+    <header class="hero">
+      <h1>Bon Anniversaire</h1>
+      <h2 id="subTitle">Clique pour ouvrir </h2>
+    </header>
+
+    <section class="unwrap-zone">
+      <button class="gift-button" id="giftButton" type="button" aria-label="Ouvrir le cadeau">
+        <div class="frame-glow" aria-hidden="true"></div>
+        <div class="reward-star" aria-hidden="true"></div>
+        <img class="photo current" id="currentPhoto" src="1.png" alt="Cadeau encore emballe">
+        <img class="photo incoming" id="incomingPhoto" src="2.png" alt="">
+        <div class="flash-layer" id="flashLayer" aria-hidden="true"></div>
+        <div class="spark-layer" id="sparkLayer" aria-hidden="true"></div>
+        <div class="tap-hint" id="tapHint">CLIQUE POUR OUVRIR</div>
+      </button>
+    </section>
+  </main>
+
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
+  <script src="script.js" defer></script>
+</body>
+</html>
