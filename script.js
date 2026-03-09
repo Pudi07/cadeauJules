@@ -12,7 +12,7 @@ const incomingPhoto = document.getElementById("incomingPhoto");
 const flashLayer = document.getElementById("flashLayer");
 const sparkLayer = document.getElementById("sparkLayer");
 const tapHint = document.getElementById("tapHint");
-const subTitle = document.getElementById("subTitle");
+const loadingScreen = document.getElementById("loadingScreen");
 
 const fxCanvas = document.getElementById("fxCanvas");
 const fx = fxCanvas.getContext("2d");
@@ -44,17 +44,14 @@ function applyCurrentStep() {
   currentPhoto.alt = step.alt;
 }
 
-function updateSubTitle() {
-  if (state.isComplete) {
-    subTitle.textContent = "Le jouet Cars est revele.";
-    return;
-  }
-
+function updateTapHint() {
   const remaining = steps.length - 1 - state.index;
-  if (remaining <= 1) {
-    subTitle.textContent = "Dernier clic pour la reveal finale.";
+  if (state.isComplete) {
+    tapHint.textContent = "SURPRISE DEBLOQUEE";
+  } else if (remaining <= 1) {
+    tapHint.textContent = "DERNIER CLIC";
   } else {
-    subTitle.textContent = `Clique pour ouvrir (${remaining} couches restantes).`;
+    tapHint.textContent = `CLIQUE (${remaining})`;
   }
 }
 
@@ -191,8 +188,7 @@ function launchFinalCelebration() {
 
   state.isComplete = true;
   giftButton.classList.add("complete", "ultimate");
-  tapHint.textContent = "SURPRISE DEBLOQUEE";
-  updateSubTitle();
+  updateTapHint();
 
   activateFlashEffects(true);
   createGiftCenterBurst(520, 1.5);
@@ -242,7 +238,7 @@ function goToNextStep() {
       incomingPhoto.classList.remove("reveal");
       incomingPhoto.style.opacity = "0";
       state.isAnimating = false;
-      updateSubTitle();
+      updateTapHint();
 
       if (state.index >= steps.length - 1) {
         launchFinalCelebration();
@@ -258,6 +254,16 @@ window.addEventListener("resize", resizeCanvas);
 preloadImages();
 resizeCanvas();
 applyCurrentStep();
-updateSubTitle();
+updateTapHint();
 createGiftCenterBurst(90, 0.9);
 requestAnimationFrame(animateParticles);
+
+window.addEventListener("load", () => {
+  if (!loadingScreen) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    loadingScreen.classList.add("hide");
+  }, 850);
+});
